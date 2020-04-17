@@ -6,14 +6,14 @@ namespace ARMDServer
     [StructLayout(LayoutKind.Sequential)]
     public struct BinaryDateTime
     {
-        ushort _year;
-        ushort _month;
-        ushort _dayOfWeek;
-        ushort _day;
-        ushort _hour;
-        ushort _minute;
-        ushort _second;
-        ushort _milliseconds;
+        private ushort _year;
+        private ushort _month;
+        private ushort _dayOfWeek;
+        private ushort _day;
+        private ushort _hour;
+        private ushort _minute;
+        private ushort _second;
+        private ushort _milliseconds;
 
         public static BinaryDateTime FromSpan(ReadOnlySpan<byte> span)
         {

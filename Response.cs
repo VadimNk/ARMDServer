@@ -6,10 +6,10 @@ namespace ARMDServer
     [StructLayout(LayoutKind.Sequential)]
     public struct Response
     {
-        readonly BinaryDateTime _cncTime;
-        readonly BinaryDateTime _startUpTime;
-        readonly BinaryDateTime _localTime;
-        readonly uint _ticksFromStartUp;
+        private readonly BinaryDateTime _cncTime;
+        private readonly BinaryDateTime _startUpTime;
+        private readonly BinaryDateTime _localTime;
+        private readonly uint _ticksFromStartUp;
 
         private const int ChecksumRepeats = 4;
 

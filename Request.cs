@@ -6,54 +6,14 @@ namespace ARMDServer
     [StructLayout(LayoutKind.Sequential)]
     public struct Request
     {
-        private uint _identifier;
-        private long _pd;
-        private long _type;
-        private BinaryDateTime _cncTime;
+        private readonly uint _identifier;
+        private readonly long _pd;
+        private readonly long _type;
+        private readonly BinaryDateTime _cncTime;
 
-        public uint Identifier
-        {
-            get { return _identifier; }
-            private set
-            {
-                _identifier = value;
-            }
-        }
+        public BinaryDateTime CncTime => _cncTime;
 
-        public long Pd
-        {
-            get { return _pd; }
-            private set
-            {
-                _pd = value;
-            }
-        }
-
-        public long Type
-        {
-            get { return _type; }
-            private set
-            {
-                _type = value;
-            }
-        }
-
-        public BinaryDateTime CncTime
-        {
-            get { return _cncTime; }
-            private set
-            {
-                _cncTime = value;
-            }
-        }
-
-        public bool IsValid
-        {
-            get
-            {
-                return Identifier == 0x42535253 && Pd == 1 && Type == 1;
-            }
-        }
+        public bool IsValid => _identifier == 0x42535253 && _pd == 1 && _type == 1;
 
         public static Request FromSpan(ReadOnlySpan<byte> span)
         {

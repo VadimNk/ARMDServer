@@ -5,11 +5,11 @@ namespace ARMDServer
 {
     public static class Program
     {
+        private const int DateTimeServerPort = 53847;
+
         static void Main()
         {
-            int dateTimeServerPort = 53847;
-
-            var server = new DateTimeServer(IPAddress.Any, dateTimeServerPort);
+            var server = new DateTimeServer(IPAddress.Any, DateTimeServerPort);
 
             Console.Write("ARMD server starting... ");
             server.Start();
