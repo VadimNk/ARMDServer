@@ -8,7 +8,7 @@ namespace ARMDServer
     {
         private static void TimeServer(UdpClient udp)
         {
-            byte[] requestData;
+            ReadOnlySpan<byte> requestData;
             var sender = new IPEndPoint(IPAddress.Any, 0);
             try
             {
@@ -20,7 +20,7 @@ namespace ARMDServer
                 return;
             }
 
-            Request request = Request.FromArray(requestData);
+            var request = Request.FromSpan(requestData);
 
             Console.WriteLine(String.Format("{0:X4} - This is hex code.", request.Identifier));
 

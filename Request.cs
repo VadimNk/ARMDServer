@@ -1,37 +1,63 @@
-using System.IO;
+using System;
+using System.Runtime.InteropServices;
 
 namespace ARMDServer
 {
-    public class Request
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Request
     {
-        public uint Identifier { get; set; }
-        public long Pd { get; set; }
-        public long Type { get; set; }
-        public BinaryDateTime CncTime { get; set; }
-        public bool IsValid => Identifier == 0x42535253 && Pd == 1 && Type == 1;
+        private uint _identifier;
+        private long _pd;
+        private long _type;
+        private BinaryDateTime _cncTime;
 
-        public static Request FromArray(byte[] array)
+        public uint Identifier
         {
-            using MemoryStream stream = new MemoryStream(array);
-            using BinaryReader reader = new BinaryReader(stream);
-            return Request.FromBinaryReader(reader);
+            get { return _identifier; }
+            private set
+            {
+                _identifier = value;
+            }
         }
 
-        public static Request FromBinaryReader(BinaryReader reader)
+        public long Pd
         {
-            var request = new Request
+            get { return _pd; }
+            private set
             {
-                Identifier = reader.ReadUInt32(),
-                Pd = reader.ReadInt16(),
-                Type = reader.ReadInt16()
-            };
-
-            if (request.IsValid)
-            {
-                request.CncTime = BinaryDateTime.FromBinaryReader(reader);
+                _pd = value;
             }
+        }
 
-            return request;
+        public long Type
+        {
+            get { return _type; }
+            private set
+            {
+                _type = value;
+            }
+        }
+
+        public BinaryDateTime CncTime
+        {
+            get { return _cncTime; }
+            private set
+            {
+                _cncTime = value;
+            }
+        }
+
+        public bool IsValid
+        {
+            get
+            {
+                return Identifier == 0x42535253 && Pd == 1 && Type == 1;
+            }
+        }
+
+        public static Request FromSpan(ReadOnlySpan<byte> span)
+        {
+            return MemoryMarshal.AsRef<Request>(span);
         }
     }
 }

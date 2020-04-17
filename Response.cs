@@ -1,14 +1,17 @@
 using System;
-using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ARMDServer
 {
-    public class Response
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Response
     {
         readonly BinaryDateTime _cncTime;
         readonly BinaryDateTime _startUpTime;
         readonly BinaryDateTime _localTime;
         readonly uint _ticksFromStartUp;
+
+        private const int ChecksumRepeats = 4;
 
         public Response(BinaryDateTime cncTime)
         {
@@ -26,29 +29,33 @@ namespace ARMDServer
 
         public byte[] ToArray()
         {
-            byte[] responseData = new byte[500];
-            using MemoryStream responseDataStream = new MemoryStream(responseData);
-            using BinaryWriter responseDataWriter = new BinaryWriter(responseDataStream);
-            WriteTo(responseDataWriter);
-            AppendChecksumTo(responseDataWriter);
+            var thisSize = Marshal.SizeOf(this);
+            var checksumSize = thisSize * ChecksumRepeats;
+            var responseSize = thisSize + checksumSize;
+
+            var responseData = new byte[responseSize];
+
+            AsSpan().CopyTo(responseData);
+            AppendChecksumTo(responseData);
 
             return responseData;
         }
 
-        private void AppendChecksumTo(BinaryWriter responseDataWriter)
+        private void AppendChecksumTo(Span<byte> destination)
         {
-            for (int i = 0; i < 4; i++)
+            var checksum = AsSpan();
+            var size = Marshal.SizeOf(this);
+            var offset = size;
+
+            for (int i = 0; i < ChecksumRepeats; i++)
             {
-                WriteTo(responseDataWriter);
+                checksum.CopyTo(destination.Slice(offset + i * size));
             }
         }
 
-        private void WriteTo(BinaryWriter writer)
+        private ReadOnlySpan<byte> AsSpan()
         {
-            writer.Write(_cncTime);
-            writer.Write(_startUpTime);
-            writer.Write(_localTime);
-            writer.Write(_ticksFromStartUp);
+            return MemoryMarshal.Cast<Response, byte>(MemoryMarshal.CreateSpan(ref this, 1));
         }
     }
 }
