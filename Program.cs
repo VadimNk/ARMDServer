@@ -10,6 +10,8 @@ namespace ARMDServer
             int dateTimeServerPort = 53847;
 
             var server = new DateTimeServer(IPAddress.Any, dateTimeServerPort);
+
+            Console.Write("ARMD server starting... ");
             server.Start();
             Console.WriteLine("Done!");
 
