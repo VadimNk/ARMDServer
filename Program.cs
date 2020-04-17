@@ -1,48 +1,37 @@
 ﻿using System;
 using System.Net;
-using System.Net.Sockets;
 
 namespace ARMDServer
 {
     public static class Program
     {
-        private static void TimeServer(UdpClient udp)
+        static void Main()
         {
-            ReadOnlySpan<byte> requestData;
-            var sender = new IPEndPoint(IPAddress.Any, 0);
-            try
-            {
-                requestData = udp.Receive(ref sender);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return;
-            }
+            int dateTimeServerPort = 53847;
 
-            var request = Request.FromSpan(requestData);
+            var server = new DateTimeServer(IPAddress.Any, dateTimeServerPort);
+            server.Start();
+            Console.WriteLine("Done!");
 
-            Console.WriteLine(String.Format("{0:X4} - This is hex code.", request.Identifier));
+            Console.WriteLine("Press Enter to stop the server or '!' to restart the server...");
 
-            if (!request.IsValid)
-            {
-                return;
-            }
-
-            var response = new Response(request.CncTime);
-            var responseData = response.ToArray();
-
-            udp.Send(responseData, responseData.Length, sender);
-        }
-
-        static void Main(string[] args)
-        {
-            var serverEndPoint = new IPEndPoint(IPAddress.Any, 53847);
-            var udp = new UdpClient(serverEndPoint);
             while (true)
             {
-                TimeServer(udp);
+                string line = Console.ReadLine();
+                if (string.IsNullOrEmpty(line))
+                    break;
+
+                if (line == "!")
+                {
+                    Console.Write("Server restarting... ");
+                    server.Restart();
+                    Console.WriteLine("Done!");
+                }
             }
+
+            Console.Write("Server stopping... ");
+            server.Stop();
+            Console.WriteLine("Done!");
         }
     }
 }
