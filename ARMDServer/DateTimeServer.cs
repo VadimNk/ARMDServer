@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using NetCoreServer;
@@ -16,7 +17,16 @@ namespace ARMDServer
 
         protected override void OnReceived(EndPoint endpoint, byte[] buffer, long offset, long size)
         {
-            var request = Request.FromSpan(buffer);
+            Request request;
+            try
+            {
+                request = Request.FromSpan(buffer);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return;
+            }
 
             if (!request.IsValid)
             {

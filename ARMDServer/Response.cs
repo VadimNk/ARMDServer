@@ -6,19 +6,19 @@ namespace ARMDServer
     [StructLayout(LayoutKind.Sequential)]
     public struct Response
     {
-        private readonly BinaryDateTime _cncTime;
-        private readonly BinaryDateTime _startUpTime;
-        private readonly BinaryDateTime _localTime;
-        private readonly uint _ticksFromStartUp;
+        public readonly BinaryDateTime CncTime { get; }
+        public readonly BinaryDateTime StartUpTime { get; }
+        public readonly BinaryDateTime LocalTime { get; }
+        public readonly uint TicksFromStartUp { get; }
 
-        private const int ChecksumRepeats = 4;
+        public const int ChecksumRepeats = 4;
 
         public Response(BinaryDateTime cncTime)
         {
-            _cncTime = cncTime;
-            _startUpTime = BinaryDateTime.FromDateTime(GetStartUpTime());
-            _localTime = BinaryDateTime.FromDateTime(DateTime.Now);
-            _ticksFromStartUp = (uint)Environment.TickCount;
+            CncTime = cncTime;
+            StartUpTime = BinaryDateTime.FromDateTime(GetStartUpTime());
+            LocalTime = BinaryDateTime.FromDateTime(DateTime.Now);
+            TicksFromStartUp = (uint)Environment.TickCount;
         }
 
         private static DateTime GetStartUpTime()

@@ -93,5 +93,36 @@ namespace ARMDServer.Tests
 
             Assert.False(request.IsValid);
         }
+
+        [Test]
+        public void CheckConvertionFromSpanIfLengthLessThanStructSize()
+        {
+            var expected = new byte[Marshal.SizeOf(typeof(Request))];
+            BitConverter.GetBytes(ValidIdentifier).CopyTo(expected, 0);
+            BitConverter.GetBytes(ValidPd).CopyTo(expected, 4);
+            BitConverter.GetBytes(ValidType).CopyTo(expected, 12);
+            TestCncTime.AsSpan().ToArray().CopyTo(expected, 20);
+
+            Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected[..20]));
+        }
+
+        [Test]
+        public void CheckConvertionFromSpanIfLengthMoreThanStructSize()
+        {
+            var additionalSize = 10;
+            var expected = new byte[Marshal.SizeOf(typeof(Request)) + additionalSize];
+            BitConverter.GetBytes(ValidIdentifier).CopyTo(expected, 0);
+            BitConverter.GetBytes(ValidPd).CopyTo(expected, 4);
+            BitConverter.GetBytes(ValidType).CopyTo(expected, 12);
+            TestCncTime.AsSpan().ToArray().CopyTo(expected, 20);
+
+            Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected));
+        }
+
+        [Test]
+        public void CheckConvertionFromSpanIfSpanIsNull()
+        {
+            Assert.Throws(typeof(ArgumentException), () => Request.FromSpan(null));
+        }
     }
 }

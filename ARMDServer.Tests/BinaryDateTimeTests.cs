@@ -26,7 +26,7 @@ namespace ARMDServer.Tests
                 Marshal.SizeOf(time.Minute) +
                 Marshal.SizeOf(time.Second) +
                 Marshal.SizeOf(time.DayOfWeek) +
-                Marshal.SizeOf(time.Milliseconds);
+                Marshal.SizeOf(time.Millisecond);
 
             var actualSize = Marshal.SizeOf(time);
 
@@ -45,7 +45,7 @@ namespace ARMDServer.Tests
             Assert.AreEqual(TestTime.Minute, time.Minute);
             Assert.AreEqual(TestTime.Second, time.Second);
             Assert.AreEqual((ushort)TestTime.DayOfWeek, time.DayOfWeek);
-            Assert.AreEqual(TestTime.Millisecond, time.Milliseconds);
+            Assert.AreEqual(TestTime.Millisecond, time.Millisecond);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace ARMDServer.Tests
             Assert.AreEqual(TestTime.Minute, time.Minute);
             Assert.AreEqual(TestTime.Second, time.Second);
             Assert.AreEqual((ushort)TestTime.DayOfWeek, time.DayOfWeek);
-            Assert.AreEqual(TestTime.Millisecond, time.Milliseconds);
+            Assert.AreEqual(TestTime.Millisecond, time.Millisecond);
         }
 
         [Test]
