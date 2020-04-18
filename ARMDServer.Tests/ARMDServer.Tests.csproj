@@ -5,6 +5,7 @@
 
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
+    <DefaultItemExcludes>obj/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

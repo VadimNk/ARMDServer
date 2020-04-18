@@ -17,6 +17,16 @@ namespace ARMDServer
 
         public static BinaryDateTime FromSpan(ReadOnlySpan<byte> span)
         {
+            if (span == null)
+            {
+                throw new ArgumentException(nameof(span));
+            }
+
+            if (span.Length != Marshal.SizeOf(typeof(BinaryDateTime)))
+            {
+                throw new BinaryDateTimeLengthException("The size of span not equal to the size of Request struct.");
+            }
+
             return MemoryMarshal.AsRef<BinaryDateTime>(span);
         }
 

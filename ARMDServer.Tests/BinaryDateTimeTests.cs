@@ -110,5 +110,44 @@ namespace ARMDServer.Tests
 
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void CheckConvertionFromSpanIfLengthLessThanStructSize()
+        {
+            var expected = new byte[Marshal.SizeOf(new BinaryDateTime())];
+            BitConverter.GetBytes((ushort)TestTime.Year).CopyTo(expected, 0);
+            BitConverter.GetBytes((ushort)TestTime.Month).CopyTo(expected, 2);
+            BitConverter.GetBytes((ushort)TestTime.DayOfWeek).CopyTo(expected, 4);
+            BitConverter.GetBytes((ushort)TestTime.Day).CopyTo(expected, 6);
+            BitConverter.GetBytes((ushort)TestTime.Hour).CopyTo(expected, 8);
+            BitConverter.GetBytes((ushort)TestTime.Minute).CopyTo(expected, 10);
+            BitConverter.GetBytes((ushort)TestTime.Second).CopyTo(expected, 12);
+            BitConverter.GetBytes((ushort)TestTime.Millisecond).CopyTo(expected, 14);
+
+            Assert.Throws(typeof(BinaryDateTimeLengthException), () => BinaryDateTime.FromSpan(expected[..12]));
+        }
+
+        [Test]
+        public void CheckConvertionFromSpanIfLengthMoreThanStructSize()
+        {
+            var additionalSize = 10;
+            var expected = new byte[Marshal.SizeOf(new BinaryDateTime()) + additionalSize];
+            BitConverter.GetBytes((ushort)TestTime.Year).CopyTo(expected, 0);
+            BitConverter.GetBytes((ushort)TestTime.Month).CopyTo(expected, 2);
+            BitConverter.GetBytes((ushort)TestTime.DayOfWeek).CopyTo(expected, 4);
+            BitConverter.GetBytes((ushort)TestTime.Day).CopyTo(expected, 6);
+            BitConverter.GetBytes((ushort)TestTime.Hour).CopyTo(expected, 8);
+            BitConverter.GetBytes((ushort)TestTime.Minute).CopyTo(expected, 10);
+            BitConverter.GetBytes((ushort)TestTime.Second).CopyTo(expected, 12);
+            BitConverter.GetBytes((ushort)TestTime.Millisecond).CopyTo(expected, 14);
+
+            Assert.Throws(typeof(BinaryDateTimeLengthException), () => BinaryDateTime.FromSpan(expected));
+        }
+
+        [Test]
+        public void CheckConvertionFromSpanIfSpanIsNull()
+        {
+            Assert.Throws(typeof(ArgumentException), () => BinaryDateTime.FromSpan(null));
+        }
     }
 }

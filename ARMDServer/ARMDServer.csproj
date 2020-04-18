@@ -8,6 +8,7 @@
     <Deterministic>false</Deterministic>
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <DefaultItemExcludes>obj/**</DefaultItemExcludes>
 
     <Company>BaltSystem</Company>
     <Product>ARMDServer</Product>
