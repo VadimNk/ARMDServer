@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using System.Runtime.InteropServices;
 
 namespace ARMDServer.Tests
 {
@@ -11,6 +12,25 @@ namespace ARMDServer.Tests
         public void Setup()
         {
             TestTime = DateTime.Now;
+        }
+
+        [Test]
+        public void AbsoluteSizeOfType()
+        {
+            var time = new BinaryDateTime();
+            var expectedSize =
+                Marshal.SizeOf(time.Year) +
+                Marshal.SizeOf(time.Month) +
+                Marshal.SizeOf(time.Day) +
+                Marshal.SizeOf(time.Hour) +
+                Marshal.SizeOf(time.Minute) +
+                Marshal.SizeOf(time.Second) +
+                Marshal.SizeOf(time.DayOfWeek) +
+                Marshal.SizeOf(time.Milliseconds);
+
+            var actualSize = Marshal.SizeOf(time);
+
+            Assert.AreEqual(expectedSize, actualSize);
         }
 
         [Test]
@@ -31,7 +51,7 @@ namespace ARMDServer.Tests
         [Test]
         public void ConvertionToSpanFromDateTime()
         {
-            var expected = new byte[16];
+            var expected = new byte[Marshal.SizeOf(new BinaryDateTime())];
             BitConverter.GetBytes((ushort)TestTime.Year).CopyTo(expected, 0);
             BitConverter.GetBytes((ushort)TestTime.Month).CopyTo(expected, 2);
             BitConverter.GetBytes((ushort)TestTime.DayOfWeek).CopyTo(expected, 4);

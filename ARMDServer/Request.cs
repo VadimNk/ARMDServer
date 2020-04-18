@@ -3,17 +3,15 @@ using System.Runtime.InteropServices;
 
 namespace ARMDServer
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Request
     {
-        private readonly uint _identifier;
-        private readonly long _pd;
-        private readonly long _type;
-        private readonly BinaryDateTime _cncTime;
+        public readonly uint Identifier { get; }
+        public readonly long Pd { get; }
+        public readonly long Type { get; }
+        public readonly BinaryDateTime CncTime { get; }
 
-        public BinaryDateTime CncTime => _cncTime;
-
-        public bool IsValid => _identifier == 0x42535253 && _pd == 1 && _type == 1;
+        public bool IsValid => Identifier == 0x42535253 && Pd == 1 && Type == 1;
 
         public static Request FromSpan(ReadOnlySpan<byte> span)
         {
