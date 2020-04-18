@@ -1,10 +1,14 @@
-[System.Serializable]
-public class RequestLengthException : System.Exception
+using System;
+using System.Runtime.Serialization;
+
+namespace ARMDServer
 {
-    public RequestLengthException() { }
-    public RequestLengthException(string message) : base(message) { }
-    public RequestLengthException(string message, System.Exception inner) : base(message, inner) { }
-    protected RequestLengthException(
-        System.Runtime.Serialization.SerializationInfo info,
-        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    [Serializable]
+    public class RequestLengthException : Exception
+    {
+        public RequestLengthException() { }
+        public RequestLengthException(string message) : base(message) { }
+        public RequestLengthException(string message, Exception inner) : base(message, inner) { }
+        protected RequestLengthException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    }
 }
