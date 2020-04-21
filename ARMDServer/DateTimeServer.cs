@@ -20,7 +20,7 @@ namespace ARMDServer
             Request request;
             try
             {
-                request = Request.FromSpan(buffer);
+                request = Request.FromSpan(buffer.AsSpan().Slice((int)offset, (int)size));
             }
             catch (Exception ex)
             {
