@@ -7,8 +7,8 @@ namespace ARMDServer.Tests
     public class RequestTests
     {
         private const uint ValidIdentifier = 0x42535253;
-        private const long ValidPd = 1;
-        private const long ValidType = 1;
+        private const ushort ValidPd = 1;
+        private const ushort ValidType = 1;
 
         private BinaryDateTime TestCncTime { get; set; }
 
@@ -39,8 +39,8 @@ namespace ARMDServer.Tests
             var expected = new byte[Marshal.SizeOf(typeof(Request))];
             BitConverter.GetBytes(ValidIdentifier).CopyTo(expected, 0);
             BitConverter.GetBytes(ValidPd).CopyTo(expected, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(expected, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(expected, 20);
+            BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
             var request = Request.FromSpan(expected);
 
@@ -56,8 +56,8 @@ namespace ARMDServer.Tests
             var requetData = new byte[Marshal.SizeOf(typeof(Request))];
             BitConverter.GetBytes(invalidIdentifier).CopyTo(requetData, 0);
             BitConverter.GetBytes(ValidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(requetData, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 20);
+            BitConverter.GetBytes(ValidType).CopyTo(requetData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
 
             var request = Request.FromSpan(requetData);
 
@@ -71,8 +71,8 @@ namespace ARMDServer.Tests
             var requetData = new byte[Marshal.SizeOf(typeof(Request))];
             BitConverter.GetBytes(ValidIdentifier).CopyTo(requetData, 0);
             BitConverter.GetBytes(invalidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(requetData, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 20);
+            BitConverter.GetBytes(ValidType).CopyTo(requetData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
 
             var request = Request.FromSpan(requetData);
 
@@ -86,8 +86,8 @@ namespace ARMDServer.Tests
             var requetData = new byte[Marshal.SizeOf(typeof(Request))];
             BitConverter.GetBytes(ValidIdentifier).CopyTo(requetData, 0);
             BitConverter.GetBytes(ValidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(invalidType).CopyTo(requetData, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 20);
+            BitConverter.GetBytes(invalidType).CopyTo(requetData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
 
             var request = Request.FromSpan(requetData);
 
@@ -100,8 +100,8 @@ namespace ARMDServer.Tests
             var expected = new byte[Marshal.SizeOf(typeof(Request))];
             BitConverter.GetBytes(ValidIdentifier).CopyTo(expected, 0);
             BitConverter.GetBytes(ValidPd).CopyTo(expected, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(expected, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(expected, 20);
+            BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
             Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected[..20]));
         }
@@ -113,8 +113,8 @@ namespace ARMDServer.Tests
             var expected = new byte[Marshal.SizeOf(typeof(Request)) + additionalSize];
             BitConverter.GetBytes(ValidIdentifier).CopyTo(expected, 0);
             BitConverter.GetBytes(ValidPd).CopyTo(expected, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(expected, 12);
-            TestCncTime.AsSpan().ToArray().CopyTo(expected, 20);
+            BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
             Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected));
         }
