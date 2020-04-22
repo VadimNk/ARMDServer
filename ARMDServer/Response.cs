@@ -35,7 +35,7 @@ namespace ARMDServer
 
             var responseData = new byte[responseSize];
 
-            this.AsSpan().CopyTo(responseData);
+            AsSpan().CopyTo(responseData);
             AppendChecksumTo(responseData);
 
             return responseData;
@@ -43,7 +43,7 @@ namespace ARMDServer
 
         private void AppendChecksumTo(Span<byte> destination)
         {
-            var checksum = this.AsSpan();
+            var checksum = AsSpan();
             var size = Marshal.SizeOf(this);
             var offset = size;
 
@@ -51,6 +51,11 @@ namespace ARMDServer
             {
                 checksum.CopyTo(destination.Slice(offset + i * size));
             }
+        }
+
+        private ReadOnlySpan<byte> AsSpan()
+        {
+            return MemoryMarshal.Cast<Response, byte>(MemoryMarshal.CreateSpan(ref this, 1));
         }
     }
 }
