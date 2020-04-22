@@ -15,21 +15,6 @@ namespace ARMDServer
         public ushort Second { get; private set; }
         public ushort Millisecond { get; private set; }
 
-        public static BinaryDateTime FromSpan(ReadOnlySpan<byte> span)
-        {
-            if (span == null)
-            {
-                throw new ArgumentException(nameof(span));
-            }
-
-            if (span.Length != Marshal.SizeOf(typeof(BinaryDateTime)))
-            {
-                throw new BinaryDateTimeLengthException("The size of span not equal to the size of Request struct.");
-            }
-
-            return MemoryMarshal.AsRef<BinaryDateTime>(span);
-        }
-
         public static BinaryDateTime FromDateTime(DateTime dateTime)
         {
             return new BinaryDateTime
@@ -43,29 +28,6 @@ namespace ARMDServer
                 Second = (ushort)dateTime.Second,
                 Millisecond = (ushort)dateTime.Millisecond
             };
-        }
-
-        public ReadOnlySpan<byte> AsSpan()
-        {
-            return MemoryMarshal.Cast<BinaryDateTime, byte>(MemoryMarshal.CreateSpan(ref this, 1));
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is BinaryDateTime time &&
-                   Year == time.Year &&
-                   Month == time.Month &&
-                   DayOfWeek == time.DayOfWeek &&
-                   Day == time.Day &&
-                   Hour == time.Hour &&
-                   Minute == time.Minute &&
-                   Second == time.Second &&
-                   Millisecond == time.Millisecond;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Year, Month, DayOfWeek, Day, Hour, Minute, Second, Millisecond);
         }
     }
 }

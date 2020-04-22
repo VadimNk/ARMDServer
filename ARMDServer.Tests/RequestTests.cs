@@ -42,7 +42,7 @@ namespace ARMDServer.Tests
             BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
             TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
-            var request = Request.FromSpan(expected);
+            var request = expected.AsSpan().AsStruct<Request>();
 
             var actual = MemoryMarshal.Cast<Request, byte>(MemoryMarshal.CreateSpan(ref request, 1)).ToArray();
 
@@ -53,13 +53,13 @@ namespace ARMDServer.Tests
         public void ValidationIfIdInvalid()
         {
             uint invalidIdentifier = 100;
-            var requetData = new byte[Marshal.SizeOf(typeof(Request))];
-            BitConverter.GetBytes(invalidIdentifier).CopyTo(requetData, 0);
-            BitConverter.GetBytes(ValidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(requetData, 6);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
+            var requestData = new byte[Marshal.SizeOf(typeof(Request))];
+            BitConverter.GetBytes(invalidIdentifier).CopyTo(requestData, 0);
+            BitConverter.GetBytes(ValidPd).CopyTo(requestData, 4);
+            BitConverter.GetBytes(ValidType).CopyTo(requestData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requestData, 8);
 
-            var request = Request.FromSpan(requetData);
+            var request = requestData.AsSpan().AsStruct<Request>();
 
             Assert.False(request.IsValid);
         }
@@ -68,13 +68,13 @@ namespace ARMDServer.Tests
         public void ValidationIfPdInvalid()
         {
             uint invalidPd = 100;
-            var requetData = new byte[Marshal.SizeOf(typeof(Request))];
-            BitConverter.GetBytes(ValidIdentifier).CopyTo(requetData, 0);
-            BitConverter.GetBytes(invalidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(ValidType).CopyTo(requetData, 6);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
+            var requestData = new byte[Marshal.SizeOf(typeof(Request))];
+            BitConverter.GetBytes(ValidIdentifier).CopyTo(requestData, 0);
+            BitConverter.GetBytes(invalidPd).CopyTo(requestData, 4);
+            BitConverter.GetBytes(ValidType).CopyTo(requestData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requestData, 8);
 
-            var request = Request.FromSpan(requetData);
+            var request = requestData.AsSpan().AsStruct<Request>();
 
             Assert.False(request.IsValid);
         }
@@ -83,13 +83,13 @@ namespace ARMDServer.Tests
         public void ValidationIfTypeInvalid()
         {
             uint invalidType = 100;
-            var requetData = new byte[Marshal.SizeOf(typeof(Request))];
-            BitConverter.GetBytes(ValidIdentifier).CopyTo(requetData, 0);
-            BitConverter.GetBytes(ValidPd).CopyTo(requetData, 4);
-            BitConverter.GetBytes(invalidType).CopyTo(requetData, 6);
-            TestCncTime.AsSpan().ToArray().CopyTo(requetData, 8);
+            var requestData = new byte[Marshal.SizeOf(typeof(Request))];
+            BitConverter.GetBytes(ValidIdentifier).CopyTo(requestData, 0);
+            BitConverter.GetBytes(ValidPd).CopyTo(requestData, 4);
+            BitConverter.GetBytes(invalidType).CopyTo(requestData, 6);
+            TestCncTime.AsSpan().ToArray().CopyTo(requestData, 8);
 
-            var request = Request.FromSpan(requetData);
+            var request = requestData.AsSpan().AsStruct<Request>();
 
             Assert.False(request.IsValid);
         }
@@ -103,7 +103,7 @@ namespace ARMDServer.Tests
             BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
             TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
-            Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected[..20]));
+            Assert.Throws(typeof(SpanLengthException), () => expected[..20].AsSpan().AsStruct<Request>());
         }
 
         [Test]
@@ -116,13 +116,17 @@ namespace ARMDServer.Tests
             BitConverter.GetBytes(ValidType).CopyTo(expected, 6);
             TestCncTime.AsSpan().ToArray().CopyTo(expected, 8);
 
-            Assert.Throws(typeof(RequestLengthException), () => Request.FromSpan(expected));
+            Assert.Throws(typeof(SpanLengthException), () => expected.AsSpan().AsStruct<Request>());
         }
 
         [Test]
         public void CheckConvertionFromSpanIfSpanIsNull()
         {
-            Assert.Throws(typeof(ArgumentException), () => Request.FromSpan(null));
+            Assert.Throws(typeof(ArgumentNullException), () =>
+            {
+                Span<byte> nullSpan = null;
+                nullSpan.AsStruct<Request>();
+            });
         }
     }
 }
